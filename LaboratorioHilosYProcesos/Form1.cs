@@ -18,107 +18,98 @@ namespace LaboratorioHilosYProcesos
             InitializeComponent();
         }
         Recursividad r = new Recursividad();
+
         delegate void delegado(int valor);
 
         public static String GetTimestamp(DateTime value)
         {
-            return value.ToString("yyyy/MM/dd HHmmssffff");
+            return value.ToString("yyyy/MM/dd HH:mm:ss.ffff");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             if (textBox1.Text != "")
             {
-                if (comboBox1.Text != "")
+                //USO DE PROGRAMACIÓN LINEAL
+                if (comboBox1.Text != "" && comboBox1.Text == "Modo Secuencial")
                 {
-                    //USO DE PROGRAMACIÓN LINEAL
-                    if (comboBox2.Text != "" && comboBox1.Text == "Modo Secuencial" && comboBox2.Text == "Factorial")
+                    txtResultado.Clear();
+                    int n = 1;
+                    while (n <= Convert.ToInt32(textBox1.Text))
                     {
-                        txtResultado.Clear();
-                        int n = 1;
-                        while (n <= Convert.ToInt32(textBox1.Text))
-                        {
-                            txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + r.factorial(Convert.ToInt32(n)) + "\r\n";
-                            n++;
-                        }
+                        txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + " - " + "Atendiendo Modo Secuencial Factorial 1: " + r.factorial(Convert.ToInt32(n)) + "\r\n";
+                        Thread.Sleep(20);
+                        n++;
                     }
-                    else if (comboBox2.Text != "" && comboBox1.Text == "Modo Secuencial" && comboBox2.Text == "Fibonacci")
+                    
+                    int i = 1;
+                    while (i <= Convert.ToInt32(textBox1.Text))
                     {
-                        txtResultado.Clear();
-                        int n = 1;
-                        while (n <= Convert.ToInt32(textBox1.Text))
-                        {
-                            txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + r.fibonacci(Convert.ToInt32(n)) + "\r\n";
-                            n++;
-                        }
+                        txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + " - " + "Atendiendo Modo Secuencial Fibonacci 2: " + r.fibonacci(Convert.ToInt32(i)) + "\r\n";
+                        Thread.Sleep(20); 
+                        i++;
                     }
-                    //USO DE HILOS 
-                    else if (comboBox2.Text != "" && comboBox1.Text == "Uso de Hilos" && comboBox2.Text == "Factorial")
-                    {
-                        //Thread HiloProcesoFactorial = new Thread(new ThreadStart(AtenderHiloFactorial));
-                        Thread HiloProcesoFactorial = new Thread(new ThreadStart(AtenderHiloFactorial));
-                        HiloProcesoFactorial.Start();
-
-                        
-                    }
-                    else
-                        MessageBox.Show("Seleccionar operación");
                 }
+                //USO DE HILOS 
+                else if (comboBox1.Text != "" && comboBox1.Text == "Uso de Hilos")
+                {
+                    Thread HiloProcesoFactorial = new Thread(new ThreadStart(AtenderHiloFactorial));
+                    Thread HiloProcesoFibonacci = new Thread(new ThreadStart(AtenderHiloFibonacci));
+                    
+                    HiloProcesoFactorial.Start();
+                    HiloProcesoFibonacci.Start();
+                }
+
                 else
-                    MessageBox.Show("Seleccionar modo de ejecución");
+                    MessageBox.Show("Seleccionar operación");
             }
             else
                 MessageBox.Show("Ingresar datos en el txt");
 
         }
 
-        //public double factorialHilo(int num)
-        //{
-        //    delegado MD = new delegado(Actualizar1);
-        //    if (num == 0 || num == 1)
-        //    {
-        //        this.Invoke(MD, new object[] { num });
-        //        return 1;
-        //    }
-        //    return num * factorialHilo(num - 1);
-        //    this.Invoke(MD, new object[] { num * factorialHilo(num - 1) });
-
-        //}
         public void AtenderHiloFactorial()
         {
             for (int i = 1; i <= Convert.ToInt32(textBox1.Text); i++)
             {
-                delegado MD = new delegado(Actualizar1);
-                this.Invoke(MD, new object[] { r.factorial(i) });
-                //this.Invoke(MD, new object[] { i });
-                //Thread.Sleep(10);
+                delegado MD = new delegado(ActualizarFactorial);
+                this.Invoke(MD, new object[] { r.fibonacci(Convert.ToInt32(i)) });
+                Thread.Sleep(20);
             }
         }
-        public void Actualizar1(int valor)
+
+        public void AtenderHiloFibonacci()
         {
-            //txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + " - " + "Atendiendo Proceso 1 No: " + valor + "\r\n";
-            //txtResultado.Clear();
-            //int n = 1;
-            //while (n <= Convert.ToInt32(textBox1.Text))
-            //{
-            //    txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + " -  " + r.factorial(Convert.ToInt32(n)) + "\r\n";
-            //    n++;
-            //}
-            //txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + " -  " + r.factorial(valor) + "\r\n";
-            txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + " -  " + valor + "\r\n";
+            for (int i = 1; i <= Convert.ToInt32(textBox1.Text); i++)
+            {
+                delegado MD = new delegado(ActualizarFibonacci);
+                this.Invoke(MD, new object[] { r.factorial(Convert.ToInt32(i)) });
+                Thread.Sleep(20);
+            }
+        }
+        public void ActualizarFactorial(int valor)
+        {
+            txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + " - " + "Atendiendo Uso De Hilos Factorial 1:   " + valor + "\r\n";
+        }
+        public void ActualizarFibonacci(int valor)
+        {
+            txtResultado.Text = txtResultado.Text + GetTimestamp(DateTime.Now) + " - " + "Atendiendo Uso De Hilos Fibonacci 2: " + valor + "\r\n";
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            textBox1.Clear();
+            txtResultado.Clear();
+        }
     }
 
     public class Recursividad
     {
-        //public static double factorial(int num)
-        public int factorial(int num)
+        public double factorial(int num)
         {
             if (num == 0 || num == 1)
                 return 1;
             return num * factorial(num - 1);
-
         }
 
         public double fibonacci(int num)
