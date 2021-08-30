@@ -70,10 +70,10 @@ namespace LaboratorioHilosYProcesos
 
         public void AtenderHiloFactorial()
         {
-            for (int i = 1; i <= Convert.ToInt32(textBox1.Text); i++)
+            for (int n = 1; n <= Convert.ToInt32(textBox1.Text); n++)
             {
                 delegado MD = new delegado(ActualizarFactorial);
-                this.Invoke(MD, new object[] { r.fibonacci(Convert.ToInt32(i)) });
+                this.Invoke(MD, new object[] { r.factorial(n) });
                 Thread.Sleep(20);
             }
         }
@@ -83,7 +83,7 @@ namespace LaboratorioHilosYProcesos
             for (int i = 1; i <= Convert.ToInt32(textBox1.Text); i++)
             {
                 delegado MD = new delegado(ActualizarFibonacci);
-                this.Invoke(MD, new object[] { r.factorial(Convert.ToInt32(i)) });
+                this.Invoke(MD, new object[] { r.fibonacci(i) });
                 Thread.Sleep(20);
             }
         }
@@ -105,14 +105,14 @@ namespace LaboratorioHilosYProcesos
 
     public class Recursividad
     {
-        public double factorial(int num)
+        public int factorial(int num)
         {
             if (num == 0 || num == 1)
                 return 1;
             return num * factorial(num - 1);
         }
 
-        public double fibonacci(int num)
+        public int fibonacci(int num)
         {
             if (num < 2)
                 return num;
